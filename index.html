@@ -2,78 +2,217 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Hi, I'm Vlad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi, I'm Vlad(s)</title>
     <style>
-        body, html {
+        body {
             margin: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
+            padding: 0;
+            background-color: #111;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            font-family: sans-serif;
         }
-        #dvd {
+
+        /* Контейнер для кнопок строго по центру */
+        .controls {
             position: absolute;
-            font-size: 48px;
-            font-family: Arial, sans-serif;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 20px;
+            z-index: 10; /* Кнопки всегда поверх летающих Владов */
+        }
+
+        /* Стиль кнопок */
+        button {
+            padding: 15px 25px;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #ff0000;
-            user-select: none;
+            background-color: #222;
+            color: #fff;
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #333;
+            border-color: #fff;
+        }
+
+        /* Стиль для ошибки */
+        #error-msg {
+            position: absolute;
+            top: calc(50% + 60px);
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff3333;
+            font-size: 1.1rem;
+            font-weight: bold;
+            z-index: 10;
+            display: none; /* Скрыта по умолчанию */
+        }
+
+        /* Стиль для летающих Владов */
+        .vlad-text {
+            position: absolute;
+            font-size: 3rem;
+            font-weight: bold;
             white-space: nowrap;
+            user-select: none;
+            will-change: transform;
         }
     </style>
 </head>
 <body>
 
-    <div id="dvd">Hi, I'm Vlad</div>
+    <!-- Кнопки управления -->
+    <div class="controls">
+        <button id="minus-btn">-1 Vlad</button>
+        <button id="plus-btn">+1 Vlad</button>
+    </div>
+
+    <!-- Блок для вывода ошибки -->
+    <div id="error-msg">error? too much Vlads</div>
 
     <script>
-        const dvd = document.getElementById('dvd');
-        let x = Math.random() * (window.innerWidth - dvd.clientWidth);
-        let y = Math.random() * (window.innerHeight - dvd.clientHeight);
-        let dx = 3;
-        let dy = 3;
+        const minusBtn = document.getElementById('minus-btn');
+        const plusBtn = document.getElementById('plus-btn');
+        const errorMsg = document.getElementById('error-msg');
 
-        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-        let colorIndex = 0;
+        // Массив ярких цветов
+        const colors = ['#ff0055', '#00ffcc', '#ffcc00', '#ff00ff', '#00ff00', '#0066ff', '#ffffff', '#ff5500'];
 
-        function changeColor() {
-            colorIndex = (colorIndex + 1) % colors.length;
-            dvd.style.color = colors[colorIndex];
-        }
+        // Список всех активных Владов
+        let vlads = [];
 
-        function frame() {
-            x += dx;
-            y += dy;
+        // Размеры экрана
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
 
-            if (x + dvd.clientWidth >= window.innerWidth) {
-                x = window.innerWidth - dvd.clientWidth;
-                dx = -dx;
-                changeColor();
-            } else if (x <= 0) {
-                x = 0;
-                dx = -dx;
-                changeColor();
+        // Класс (шаблон) для создания каждого отдельного Влада
+        class Vlad {
+            constructor() {
+                // Создаем HTML-элемент
+                this.element = document.createElement('div');
+                this.element.className = 'vlad-text';
+                this.element.innerText = "Hi, Im Vlad";
+                
+                // Случайный начальный цвет
+                this.element.style.color = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(this.element);
+
+                // Замеряем размеры текста
+                this.width = this.element.offsetWidth;
+                this.height = this.element.offsetHeight;
+
+                // Случайная начальная позиция
+                this.x = Math.random() * (screenWidth - this.width);
+                this.y = Math.random() * (screenHeight - this.height);
+
+                // Случайное направление скорости (в пределах от 2 до 4 пикселей)
+                this.dx = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
+                this.dy = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
             }
 
-            if (y + dvd.clientHeight >= window.innerHeight) {
-                y = window.innerHeight - dvd.clientHeight;
-                dy = -dy;
-                changeColor();
-            } else if (y <= 0) {
-                y = 0;
-                dy = -dy;
-                changeColor();
+            // Метод изменения цвета при ударе
+            changeColor() {
+                let currentColor = this.element.style.color;
+                let newColor;
+                do {
+                    newColor = colors[Math.floor(Math.random() * colors.length)];
+                } while (newColor === currentColor);
+                this.element.style.color = newColor;
             }
 
-            dvd.style.left = x + 'px';
-            dvd.style.top = y + 'px';
-            requestAnimationFrame(frame);
+            // Метод обновления позиции (движение)
+            update() {
+                this.x += this.dx;
+                this.y += this.dy;
+
+                // Столкновение по оси X
+                if (this.x <= 0 || this.x + this.width >= screenWidth) {
+                    this.dx = -this.dx;
+                    this.x = this.x <= 0 ? 0 : screenWidth - this.width;
+                    this.changeColor();
+                }
+
+                // Столкновение по оси Y
+                if (this.y <= 0 || this.y + this.height >= screenHeight) {
+                    this.dy = -this.dy;
+                    this.y = this.y <= 0 ? 0 : screenHeight - this.height;
+                    this.changeColor();
+                }
+
+                // Применяем координаты на экране
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+            }
+
+            // Удаление элемента с экрана
+            destroy() {
+                this.element.remove();
+            }
+
+            // Пересчет размеров при ресайзе экрана
+            resize() {
+                this.width = this.element.offsetWidth;
+                this.height = this.element.offsetHeight;
+            }
         }
 
-        frame();
+        // Функция показа ошибки на 2 секунды
+        function showError() {
+            errorMsg.style.display = 'block';
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 2000);
+        }
+
+        // Логика кнопки ДОБАВЛЕНИЯ Влада
+        plusBtn.addEventListener('click', () => {
+            if (vlads.length >= 5) {
+                showError();
+            } else {
+                vlads.push(new Vlad());
+            }
+        });
+
+        // Логика кнопки УДАЛЕНИЯ Влада
+        minusBtn.addEventListener('click', () => {
+            if (vlads.length <= 1) {
+                // Если остался 1 Влад, сделать 0 нельзя — просто показываем ошибку
+                showError();
+            } else {
+                // Удаляем последнего Влада из массива и убираем с экрана
+                let lastVlad = vlads.pop();
+                lastVlad.destroy();
+            }
+        });
+
+        // Главный игровой цикл анимации
+        function loop() {
+            // Обновляем позицию каждого Влада, который сейчас есть в массиве
+            vlads.forEach(vlad => vlad.update());
+            requestAnimationFrame(loop);
+        }
+
+        // Слушатель изменения размеров окна
+        window.addEventListener('resize', () => {
+            screenWidth = window.innerWidth;
+            screenHeight = window.innerHeight;
+            vlads.forEach(vlad => vlad.resize());
+        });
+
+        // Создаем первого Влада при старте
+        vlads.push(new Vlad());
+
+        // Запуск бесконечного цикла движения
+        loop();
     </script>
 </body>
 </html>
