@@ -2,66 +2,78 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Хорошилов | Кибербезопасность</title>
+    <title>Hi, I'm Vlad</title>
     <style>
-        body {
-            background-color: #0d1117;
-            color: #c9d1d9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body, html {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
         }
-        .card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            max-width: 400px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-        h1 {
-            color: #58a6ff;
-            margin-bottom: 5px;
-        }
-        .subtitle {
-            color: #8b949e;
-            font-size: 1.1em;
-            margin-bottom: 20px;
-        }
-        p {
-            line-height: 1.6;
-        }
-        .links a {
-            display: inline-block;
-            margin: 10px;
-            color: #58a6ff;
-            text-decoration: none;
-            border: 1px solid #30363d;
-            padding: 8px 16px;
-            border-radius: 5px;
-            background-color: #21262d;
-            transition: 0.2s;
-        }
-        .links a:hover {
-            background-color: #30363d;
-            border-color: #8b949e;
+        #dvd {
+            position: absolute;
+            font-size: 48px;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            color: #ff0000;
+            user-select: none;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Я Влад</h1>
-        <div class="subtitle">Айти</div>
-        <p>Арсений поганец.</p>
-        <div class="links">
-            <a href="https://github.com" target="_blank">GitHub</a>
-            <a href="mailto:khoroshilov.10@bk.ru">Контакты</a>
-        </div>
-    </div>
+
+    <div id="dvd">Hi, I'm Vlad</div>
+
+    <script>
+        const dvd = document.getElementById('dvd');
+        let x = Math.random() * (window.innerWidth - dvd.clientWidth);
+        let y = Math.random() * (window.innerHeight - dvd.clientHeight);
+        let dx = 3;
+        let dy = 3;
+
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+        let colorIndex = 0;
+
+        function changeColor() {
+            colorIndex = (colorIndex + 1) % colors.length;
+            dvd.style.color = colors[colorIndex];
+        }
+
+        function frame() {
+            x += dx;
+            y += dy;
+
+            if (x + dvd.clientWidth >= window.innerWidth) {
+                x = window.innerWidth - dvd.clientWidth;
+                dx = -dx;
+                changeColor();
+            } else if (x <= 0) {
+                x = 0;
+                dx = -dx;
+                changeColor();
+            }
+
+            if (y + dvd.clientHeight >= window.innerHeight) {
+                y = window.innerHeight - dvd.clientHeight;
+                dy = -dy;
+                changeColor();
+            } else if (y <= 0) {
+                y = 0;
+                dy = -dy;
+                changeColor();
+            }
+
+            dvd.style.left = x + 'px';
+            dvd.style.top = y + 'px';
+            requestAnimationFrame(frame);
+        }
+
+        frame();
+    </script>
 </body>
 </html>
