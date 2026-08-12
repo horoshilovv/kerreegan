@@ -183,14 +183,26 @@
         });
 
         // Логика кнопки УДАЛЕНИЯ Влада
+                // Логика кнопки УДАЛЕНИЯ Влада
         minusBtn.addEventListener('click', () => {
             if (vlads.length <= 1) {
-                // Если остался 1 Влад, сделать 0 нельзя — просто показываем ошибку
+                // Меняем текст ошибки специально для нуля
+                errorMsg.innerText = "Damn, you cannot remove Vlad from his own website";
                 showError();
             } else {
-                // Удаляем последнего Влада из массива и убираем с экрана
                 let lastVlad = vlads.pop();
                 lastVlad.destroy();
+            }
+        });
+
+        // Логика кнопки ДОБАВЛЕНИЯ Влада
+        plusBtn.addEventListener('click', () => {
+            if (vlads.length >= 5) {
+                // Возвращаем исходный текст для максимума
+                errorMsg.innerText = "error? too much Vlads";
+                showError();
+            } else {
+                vlads.push(new Vlad());
             }
         });
 
