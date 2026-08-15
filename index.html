@@ -58,6 +58,18 @@
             white-space: nowrap;
         }
 
+        /* Счётчик ударов об край */
+        #bounce-counter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #555;
+            font-size: 1rem;
+            z-index: 10;
+            user-select: none;
+            transition: color 0.1s ease;
+        }
+
         /* Стиль для летающих Владов */
         .vlad-text {
             position: absolute;
@@ -71,6 +83,9 @@
 </head>
 <body>
 
+    <!-- Изменили текст счетчика -->
+    <div id="bounce-counter">Edge hits: <span id="counter-val">0</span></div>
+
     <div class="controls">
         <button id="minus-btn">-1 Vlad</button>
         <button id="plus-btn">+1 Vlad</button>
@@ -82,11 +97,15 @@
         const minusBtn = document.getElementById('minus-btn');
         const plusBtn = document.getElementById('plus-btn');
         const errorMsg = document.getElementById('error-msg');
+        const counterVal = document.getElementById('counter-val');
 
         const colors = ['#ff0055', '#00ffcc', '#ffcc00', '#ff00ff', '#00ff00', '#0066ff', '#ffffff', '#ff5500'];
         let vlads = [];
         let screenWidth = window.innerWidth;
         let screenHeight = window.innerHeight;
+        
+        // Переменная для подсчета всех ударов
+        let totalHits = 0;
 
         class Vlad {
             constructor() {
@@ -103,6 +122,7 @@
                 this.x = Math.random() * (screenWidth - this.width);
                 this.y = Math.random() * (screenHeight - this.height);
 
+                // Возвращаем старую хаотичную скорость для разнообразия траекторий
                 this.dx = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
                 this.dy = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
             }
@@ -120,15 +140,31 @@
                 this.x += this.dx;
                 this.y += this.dy;
 
+                let isHit = false;
+
+                // Проверка удара по вертикальным краям (лево/право)
                 if (this.x <= 0 || this.x + this.width >= screenWidth) {
                     this.dx = -this.dx;
                     this.x = this.x <= 0 ? 0 : screenWidth - this.width;
-                    this.changeColor();
+                    isHit = true;
                 }
 
+                // Проверка удара по горизонтальным краям (верх/низ)
                 if (this.y <= 0 || this.y + this.height >= screenHeight) {
                     this.dy = -this.dy;
                     this.y = this.y <= 0 ? 0 : screenHeight - this.height;
+                    isHit = true;
+                }
+
+                // Если произошел любой удар — фиксируем его в JS
+                if (isHit) {
+                    totalHits++;
+                    counterVal.innerText = totalHits;
+                    
+                    // Делаем цифру яркой при ударе
+                    counterVal.style.color = '#fff';
+                    setTimeout(() => counterVal.style.color = '#555', 200);
+
                     this.changeColor();
                 }
 
@@ -176,7 +212,7 @@
             }
         });
 
-        // Основной цикл
+        // Основной цикл анимации
         function loop() {
             vlads.forEach(vlad => vlad.update());
             requestAnimationFrame(loop);
