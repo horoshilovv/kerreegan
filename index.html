@@ -3,231 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hi, I'm Vlad(s)</title>
+    <title>Аудит Кибербезопасности</title>
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
             margin: 0;
-            padding: 0;
-            background-color: #111;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            font-family: sans-serif;
-        }
-
-        /* Контейнер для кнопок строго по центру */
-        .controls {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            padding: 20px;
             display: flex;
-            gap: 20px;
-            z-index: 10;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Стиль кнопок */
-        button {
-            padding: 15px 25px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            background-color: #222;
-            color: #fff;
-            border: 2px solid #555;
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { color: var(--accent); margin-bottom: 5px; }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 30px;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            background: #334155;
+            color: var(--text);
+            border: 2px solid transparent;
+            padding: 15px;
+            margin: 10px 0;
             border-radius: 8px;
+            text-align: left;
             cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 16px;
+            transition: all 0.2s;
         }
 
-        button:hover {
-            background-color: #333;
-            border-color: #fff;
-        }
+        .option-btn:hover { border-color: var(--accent); background: #475569; }
+        .option-btn.selected { background: #0369a1; border-color: var(--accent); }
 
-        /* Стиль для ошибки */
-        #error-msg {
-            position: absolute;
-            top: calc(50% + 60px);
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ff3333;
-            font-size: 1.1rem;
+        .nav-btn {
+            background-color: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
             font-weight: bold;
-            z-index: 10;
-            display: none;
-            white-space: nowrap;
+            cursor: pointer;
+            float: right;
+            font-size: 16px;
         }
 
-        /* Счётчик ударов об край */
-        #bounce-counter {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: #555;
-            font-size: 1rem;
-            z-index: 10;
-            user-select: none;
-            transition: color 0.1s ease;
-        }
+        .nav-btn:disabled { background-color: #64748b; cursor: not-allowed; }
 
-        /* Стиль для летающих Владов */
-        .vlad-text {
-            position: absolute;
-            font-size: 3rem;
+        /* Спойлеры теории */
+        .theory-section { margin-top: 40px; }
+        .theory-item {
+            background: var(--card-bg);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .theory-title {
+            padding: 15px 20px;
+            background: #334155;
+            cursor: pointer;
             font-weight: bold;
-            white-space: nowrap;
-            user-select: none;
-            will-change: transform;
+            display: flex;
+            justify-content: space-between;
+        }
+        .theory-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .theory-item.active .theory-content {
+            padding: 20px;
+            max-height: 500px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Изменили текст счетчика -->
-    <div id="bounce-counter">Edge hits: <span id="counter-val">0</span></div>
+<div class="container">
+    <header>
+        <h1>Цифровая Гигиена</h1>
+        <p style="color: var(--text-muted)">Проверь свою устойчивость к социальной инженерии</p>
+    </header>
 
-    <div class="controls">
-        <button id="minus-btn">-1 Vlad</button>
-        <button id="plus-btn">+1 Vlad</button>
+    <!-- Раздел теста -->
+    <div class="card" id="quiz-card">
+        <h3 id="question-number" style="color: var(--accent)">Вопрос 1 из 3</h3>
+        <p id="question-text" style="font-size: 18px; font-weight: 500;"></p>
+        
+        <div id="options-container"></div>
+        
+        <div style="margin-top: 20px; height: 40px;">
+            <button class="nav-btn" id="next-btn" disabled onclick="nextQuestion()">Далее</button>
+        </div>
     </div>
 
-    <div id="error-msg">error? too much Vlads</div>
-
-    <script>
-        const minusBtn = document.getElementById('minus-btn');
-        const plusBtn = document.getElementById('plus-btn');
-        const errorMsg = document.getElementById('error-msg');
-        const counterVal = document.getElementById('counter-val');
-
-        const colors = ['#ff0055', '#00ffcc', '#ffcc00', '#ff00ff', '#00ff00', '#0066ff', '#ffffff', '#ff5500'];
-        let vlads = [];
-        let screenWidth = window.innerWidth;
-        let screenHeight = window.innerHeight;
+    <!-- Раздел теории -->
+    <div class="theory-section">
+        <h2 style="color: var(--accent); margin-bottom: 15px;">Полезная теория</h2>
         
-        // Переменная для подсчета всех ударов
-        let totalHits = 0;
+        <div class="theory-item">
+            <div class="theory-title" onclick="toggleTheory(this)">Что такое фишинг? <span>▼</span></div>
+            <div class="theory-content">
+                Фишинг — это вид интернет-мошенничества, цель которого — получить доступ к конфиденциальным данным пользователей (логинам, паролям, картам). Мошенники создают точные копии известных сайтов или ботов.
+            </div>
+        </div>
 
-        class Vlad {
-            constructor() {
-                this.element = document.createElement('div');
-                this.element.className = 'vlad-text';
-                this.element.innerText = "Hi, Im Vlad";
-                
-                this.element.style.color = colors[Math.floor(Math.random() * colors.length)];
-                document.body.appendChild(this.element);
+        <div class="theory-item">
+            <div class="theory-title" onclick="toggleTheory(this)">Главные признаки манипуляции (Соц. инженерия) <span>▼</span></div>
+            <div class="theory-content">
+                Хакерам легче взломать человека, а не компьютер. Их главные инструменты: паника ("Ваш аккаунт заблокируют через час!"), любопытство ("Посмотри, кто выложил твои фото...") или жадность ("Забери бесплатный приз").
+            </div>
+        </div>
+    </div>
+</div>
 
-                this.width = this.element.offsetWidth;
-                this.height = this.element.offsetHeight;
-
-                this.x = Math.random() * (screenWidth - this.width);
-                this.y = Math.random() * (screenHeight - this.height);
-
-                // Возвращаем старую хаотичную скорость для разнообразия траекторий
-                this.dx = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
-                this.dy = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
-            }
-
-            changeColor() {
-                let currentColor = this.element.style.color;
-                let newColor;
-                do {
-                    newColor = colors[Math.floor(Math.random() * colors.length)];
-                } while (newColor === currentColor);
-                this.element.style.color = newColor;
-            }
-
-            update() {
-                this.x += this.dx;
-                this.y += this.dy;
-
-                let isHit = false;
-
-                // Проверка удара по вертикальным краям (лево/право)
-                if (this.x <= 0 || this.x + this.width >= screenWidth) {
-                    this.dx = -this.dx;
-                    this.x = this.x <= 0 ? 0 : screenWidth - this.width;
-                    isHit = true;
-                }
-
-                // Проверка удара по горизонтальным краям (верх/низ)
-                if (this.y <= 0 || this.y + this.height >= screenHeight) {
-                    this.dy = -this.dy;
-                    this.y = this.y <= 0 ? 0 : screenHeight - this.height;
-                    isHit = true;
-                }
-
-                // Если произошел любой удар — фиксируем его в JS
-                if (isHit) {
-                    totalHits++;
-                    counterVal.innerText = totalHits;
-                    
-                    // Делаем цифру яркой при ударе
-                    counterVal.style.color = '#fff';
-                    setTimeout(() => counterVal.style.color = '#555', 200);
-
-                    this.changeColor();
-                }
-
-                this.element.style.left = this.x + 'px';
-                this.element.style.top = this.y + 'px';
-            }
-
-            destroy() {
-                this.element.remove();
-            }
-
-            resize() {
-                this.width = this.element.offsetWidth;
-                this.height = this.element.offsetHeight;
-            }
+<script>
+    // Массив вопросов (пока закинул первые 3 для примера, ты можешь вставить все 10 по аналогии)
+    const questions = [
+        {
+            text: "Вам в ЛС пишет бот «Telegram Security» и сообщает, что ваш аккаунт пытались взломать. Требуется перейти по ссылке telegram-security.net для подтверждения. Ваши действия?",
+            options: ["Срочно перейду и введу код", "Заблокирую бота. Официальные уведомления приходят только в чате с синей галочкой", "Перейду с включенным VPN", "Напишу данные в ответ"],
+            correct: 1
+        },
+        {
+            text: "Вы зашли на сайт, который выглядит как Электронный Дневник, но в адресной строке написано dnevn1k.ru. Безопасно ли вводить пароль?",
+            options: ["Да, дизайн такой же", "Да, если есть значок замочка HTTPS", "Нет, это фишинговый сайт (буква 'и' заменена на '1')", "Да, если зайти через инкогнито"],
+            correct: 2
+        },
+        {
+            text: "На почту пришло письмо: «Внимание! Срочно скачайте прикрепленный файл instructions.pdf.exe в течение 2 часов, иначе вас не допустят к экзаменам». Что делать?",
+            options: ["Скачать и открыть", "Проверить антивирусом и запустить", "Не открывать. Расширение .exe означает программу-вирус, а спешка — манипуляция", "Переслать одноклассникам"],
+            correct: 2
         }
+    ];
 
-        // Таймер для скрытия ошибки
-        let errorTimeout;
-        function showError(text) {
-            errorMsg.innerText = text;
-            errorMsg.style.display = 'block';
-            
-            clearTimeout(errorTimeout);
-            errorTimeout = setTimeout(() => {
-                errorMsg.style.display = 'none';
-            }, 2500);
+    let currentIdx = 0;
+    let selectedAnswer = null;
+    let score = 0;
+
+    function loadQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById("question-number").innerText = `Вопрос ${currentIdx + 1} из ${questions.length}`;
+        document.getElementById("question-text").innerText = q.text;
+        
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        selectedAnswer = null;
+        document.getElementById("next-btn").disabled = true;
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(btn, idx);
+            container.appendChild(btn);
+        });
+    }
+
+    function selectOption(btn, idx) {
+        document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedAnswer = idx;
+        document.getElementById("next-btn").disabled = false;
+    }
+
+    function nextQuestion() {
+        if (selectedAnswer === questions[currentIdx].correct) {
+            score++;
         }
-
-        // Логика кнопок
-        plusBtn.addEventListener('click', () => {
-            if (vlads.length >= 30) {
-                showError("error? too much Vlads");
-            } else {
-                vlads.push(new Vlad());
-            }
-        });
-
-        minusBtn.addEventListener('click', () => {
-            if (vlads.length <= 1) {
-                showError("Damn, you cannot remove Vlad from his own website");
-            } else {
-                let lastVlad = vlads.pop();
-                lastVlad.destroy();
-            }
-        });
-
-        // Основной цикл анимации
-        function loop() {
-            vlads.forEach(vlad => vlad.update());
-            requestAnimationFrame(loop);
+        
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
         }
+    }
 
-        window.addEventListener('resize', () => {
-            screenWidth = window.innerWidth;
-            screenHeight = window.innerHeight;
-            vlads.forEach(vlad => vlad.resize());
-        });
+    function showResults() {
+        const card = document.getElementById("quiz-card");
+        card.innerHTML = `
+            <h2 style="color: var(--accent); text-align:center;">Тест завершен!</h2>
+            <p style="font-size: 20px; text-align:center; margin: 20px 0;">
+                Ваш результат: <strong>${score}</strong> из ${questions.length} баллов.
+            </p>
+            <p style="text-align:center; color: var(--text-muted)">
+                ${score === questions.length ? "Отлично! Ты настоящий пентестер." : "Есть пробелы. Почитай теорию ниже!"}
+            </p>
+        `;
+    }
 
-        // Создаем ровно одного Влада на старте
-        vlads.push(new Vlad());
+    function toggleTheory(element) {
+        const item = element.parentElement;
+        item.classList.toggle("active");
+        const span = element.querySelector("span");
+        span.innerText = item.classList.contains("active") ? "▲" : "▼";
+    }
 
-        loop();
-    </script>
+    // Старт
+    loadQuestion();
+</script>
 </body>
 </html>
