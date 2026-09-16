@@ -276,7 +276,7 @@
                 Ваш результат: <strong>${score}</strong> из ${questions.length} баллов.
             </p>
             <p style="text-align:center; color: var(--text-muted)">
-                ${score === questions.length - 2 ? "Отлично! Ты защищен от мошенников и взлома." : "Есть пробелы. Почитай теорию ниже!"}
+                ${score >= questions.length - 2 ? "Отлично! Ты защищен от мошенников и взлома." : "Есть пробелы. Почитай теорию ниже!"}
             </p>
         `;
     }
