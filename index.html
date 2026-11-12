@@ -79,21 +79,9 @@
       border-color: #2B2B2B;
       box-shadow: 0 4px 0 #2B2B2B;
     }
-
-    /* Checkerboard pattern for sprite inspector canvases */
-    .sprite-checkerboard {
-      background-color: #ffffff;
-      background-image: 
-        linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
-        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
-        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-      background-size: 12px 12px;
-      background-position: 0 0, 0 6px, 6px -6px, -6px 0;
-    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between py-6 px-3 sm:px-6">
+<body class="min-h-screen flex flex-col items-center justify-center py-6 px-3 sm:px-6">
 
   <!-- Main Content Container -->
   <main class="w-full max-w-4xl flex flex-col items-center gap-5">
@@ -142,102 +130,6 @@
       <div id="start-overlay" class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center transition-opacity duration-300">
         <div class="pixel-font text-[10px] sm:text-xs px-3.5 py-1.5 rounded-full bg-[#2B2B2B]/90 text-white shadow-md animate-pulse">
           PRESS [SPACE] OR TAP TO START RUN
-        </div>
-      </div>
-    </section>
-
-    <!-- Touch / Mobile Controls Row (Also works with mouse clicks on desktop) -->
-    <section class="w-full grid grid-cols-2 gap-3 sm:hidden">
-      <button id="touch-jump" type="button" class="arcade-btn py-4 rounded-xl text-center font-bold select-none active:bg-[#00C0A3] active:text-white">
-        ▲ JUMP
-      </button>
-      <button id="touch-duck" type="button" class="arcade-btn py-4 rounded-xl text-center font-bold select-none active:bg-[#00C0A3] active:text-white">
-        ▼ DUCK / SLIDE
-      </button>
-    </section>
-
-    <!-- Custom 24x24 Pixel Art Sprite Inspector & Color Palette Card -->
-    <section class="w-full bg-white border border-neutral-300 rounded-2xl p-4 sm:p-5 shadow-sm">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-neutral-200">
-        <div>
-          <h2 class="pixel-font text-xs sm:text-sm text-[#2B2B2B] flex items-center gap-2">
-            <span>SPRITE SHEET INSPECTOR (24×24 GRID)</span>
-          </h2>
-          <p class="text-xs text-neutral-500 mt-1">
-            Programmatic 8-bit character matrices rendered in real time. The active animation state highlights while you play.
-          </p>
-        </div>
-
-        <!-- Custom Palette Swatches -->
-        <div class="flex flex-wrap items-center gap-2 text-[11px] font-medium">
-          <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200" title="Hair: #C49A45">
-            <span class="w-3.5 h-3.5 rounded-sm border border-black/20 inline-block" style="background:#C49A45"></span>
-            <span class="text-neutral-700">Hair <code class="text-[10px] text-neutral-500">#C49A45</code></span>
-          </div>
-          <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200" title="Shirt: #F0EEEC">
-            <span class="w-3.5 h-3.5 rounded-sm border border-black/20 inline-block" style="background:#F0EEEC"></span>
-            <span class="text-neutral-700">Shirt <code class="text-[10px] text-neutral-500">#F0EEEC</code></span>
-          </div>
-          <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200" title="Pants: #D0D0D5">
-            <span class="w-3.5 h-3.5 rounded-sm border border-black/20 inline-block" style="background:#D0D0D5"></span>
-            <span class="text-neutral-700">Pants <code class="text-[10px] text-neutral-500">#D0D0D5</code></span>
-          </div>
-          <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200" title="Shoes: #FFFFFF + #00C0A3">
-            <span class="w-3.5 h-3.5 rounded-sm border border-black/20 inline-block" style="background:#00C0A3"></span>
-            <span class="text-neutral-700">Shoes <code class="text-[10px] text-neutral-500">#00C0A3</code></span>
-          </div>
-          <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-neutral-100 border border-neutral-200" title="Outline: #2B2B2B">
-            <span class="w-3.5 h-3.5 rounded-sm border border-black/20 inline-block" style="background:#2B2B2B"></span>
-            <span class="text-neutral-700">Outline <code class="text-[10px] text-neutral-500">#2B2B2B</code></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5 Animation States Preview Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-4">
-        <!-- State 1: Idle -->
-        <div id="card-state-idle" class="state-card flex flex-col items-center p-3 rounded-xl border-2 border-neutral-200 bg-neutral-50 transition-all">
-          <div class="sprite-checkerboard w-20 h-20 rounded-lg border border-neutral-300 flex items-center justify-center shadow-inner">
-            <canvas id="preview-idle" width="24" height="24" class="w-16 h-16"></canvas>
-          </div>
-          <span class="pixel-font text-[10px] text-[#2B2B2B] mt-2.5">1. IDLE</span>
-          <span class="text-[11px] text-neutral-500 mt-0.5">Ready Stance</span>
-        </div>
-
-        <!-- State 2: Run (2 Alternating Frames) -->
-        <div id="card-state-run" class="state-card flex flex-col items-center p-3 rounded-xl border-2 border-neutral-200 bg-neutral-50 transition-all">
-          <div class="sprite-checkerboard w-20 h-20 rounded-lg border border-neutral-300 flex items-center justify-center shadow-inner">
-            <canvas id="preview-run" width="24" height="24" class="w-16 h-16"></canvas>
-          </div>
-          <span class="pixel-font text-[10px] text-[#2B2B2B] mt-2.5">2. RUNNING</span>
-          <span class="text-[11px] text-neutral-500 mt-0.5">2-Frame Stride</span>
-        </div>
-
-        <!-- State 3: Jump (Airborne) -->
-        <div id="card-state-jump" class="state-card flex flex-col items-center p-3 rounded-xl border-2 border-neutral-200 bg-neutral-50 transition-all">
-          <div class="sprite-checkerboard w-20 h-20 rounded-lg border border-neutral-300 flex items-center justify-center shadow-inner">
-            <canvas id="preview-jump" width="24" height="24" class="w-16 h-16"></canvas>
-          </div>
-          <span class="pixel-font text-[10px] text-[#2B2B2B] mt-2.5">3. JUMPING</span>
-          <span class="text-[11px] text-neutral-500 mt-0.5">Knees Tucked</span>
-        </div>
-
-        <!-- State 4: Duck / Crouch Slide -->
-        <div id="card-state-duck" class="state-card flex flex-col items-center p-3 rounded-xl border-2 border-neutral-200 bg-neutral-50 transition-all">
-          <div class="sprite-checkerboard w-20 h-20 rounded-lg border border-neutral-300 flex items-center justify-center shadow-inner">
-            <canvas id="preview-duck" width="24" height="24" class="w-16 h-16"></canvas>
-          </div>
-          <span class="pixel-font text-[10px] text-[#2B2B2B] mt-2.5">4. DUCKING</span>
-          <span class="text-[11px] text-neutral-500 mt-0.5">Low Crouch Slide</span>
-        </div>
-
-        <!-- State 5: Game Over -->
-        <div id="card-state-dead" class="state-card flex flex-col items-center p-3 rounded-xl border-2 border-neutral-200 bg-neutral-50 transition-all col-span-2 sm:col-span-1">
-          <div class="sprite-checkerboard w-20 h-20 rounded-lg border border-neutral-300 flex items-center justify-center shadow-inner">
-            <canvas id="preview-dead" width="24" height="24" class="w-16 h-16"></canvas>
-          </div>
-          <span class="pixel-font text-[10px] text-[#2B2B2B] mt-2.5">5. GAME OVER</span>
-          <span class="text-[11px] text-neutral-500 mt-0.5">Shock / Stumble</span>
         </div>
       </div>
     </section>
@@ -1008,38 +900,6 @@
       player.cancelJumpShort();
     });
 
-    // Mobile Touch Buttons
-    const touchJumpBtn = document.getElementById('touch-jump');
-    const touchDuckBtn = document.getElementById('touch-duck');
-
-    touchJumpBtn.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      if (game.state !== STATE.RUNNING) {
-        startOrRestartGame();
-      } else {
-        player.jump();
-      }
-    });
-    touchJumpBtn.addEventListener('pointerup', (e) => {
-      e.preventDefault();
-      player.cancelJumpShort();
-    });
-
-    touchDuckBtn.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      keys.down = true;
-      player.isDucking = true;
-    });
-    touchDuckBtn.addEventListener('pointerup', (e) => {
-      e.preventDefault();
-      keys.down = false;
-      player.isDucking = false;
-    });
-    touchDuckBtn.addEventListener('pointerleave', () => {
-      keys.down = false;
-      player.isDucking = false;
-    });
-
     // Toolbar Controls
     const btnSound = document.getElementById('btn-sound');
     const btnHitbox = document.getElementById('btn-hitbox');
@@ -1079,7 +939,6 @@
       game.frameCounter++;
 
       if (game.state !== STATE.RUNNING) {
-        updateInspectorHighlight();
         return;
       }
 
@@ -1187,8 +1046,6 @@
           obstacles.splice(i, 1);
         }
       }
-
-      updateInspectorHighlight();
     }
 
     function triggerGameOver() {
@@ -1202,7 +1059,6 @@
           localStorage.setItem('custom_pixel_runner_hi', String(game.highScore));
         } catch (e) {}
       }
-      updateInspectorHighlight();
     }
 
     /*************************************************************************
@@ -1335,69 +1191,15 @@
     }
 
     /*************************************************************************
-     * 9. SPRITE INSPECTOR PREVIEWS & LIVE STATE HIGHLIGHTER
+     * 9. HEADER AVATAR RENDERER
      *************************************************************************/
-    function renderInspectorCanvases() {
-      const drawPreview = (canvasId, sprite) => {
-        const c = document.getElementById(canvasId);
-        if (!c) return;
-        const pctx = c.getContext('2d');
-        pctx.imageSmoothingEnabled = false;
-        pctx.clearRect(0, 0, c.width, c.height);
-        pctx.drawImage(sprite, 0, 0);
-      };
-
-      drawPreview('header-avatar', PLAYER_SPRITES.idle);
-      drawPreview('preview-idle', PLAYER_SPRITES.idle);
-      drawPreview('preview-run', PLAYER_SPRITES.run1);
-      drawPreview('preview-jump', PLAYER_SPRITES.jump);
-      drawPreview('preview-duck', PLAYER_SPRITES.duck1);
-      drawPreview('preview-dead', PLAYER_SPRITES.dead);
-
-      // Animate the Running & Ducking inspector preview cards gently so user can see both frames
-      let previewTick = 0;
-      setInterval(() => {
-        previewTick = previewTick === 0 ? 1 : 0;
-        drawPreview('preview-run', previewTick === 0 ? PLAYER_SPRITES.run1 : PLAYER_SPRITES.run2);
-        drawPreview('preview-duck', previewTick === 0 ? PLAYER_SPRITES.duck1 : PLAYER_SPRITES.duck2);
-      }, 240);
-    }
-
-    let lastHighlightedState = '';
-    function updateInspectorHighlight() {
-      let currentKey = 'idle';
-      if (game.state === STATE.GAME_OVER) {
-        currentKey = 'dead';
-      } else if (player.isJumping) {
-        currentKey = 'jump';
-      } else if (player.isDucking) {
-        currentKey = 'duck';
-      } else if (game.state === STATE.RUNNING) {
-        currentKey = 'run';
-      }
-
-      if (currentKey === lastHighlightedState) return;
-      lastHighlightedState = currentKey;
-
-      const map = {
-        idle: 'card-state-idle',
-        run: 'card-state-run',
-        jump: 'card-state-jump',
-        duck: 'card-state-duck',
-        dead: 'card-state-dead'
-      };
-
-      Object.entries(map).forEach(([key, id]) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (key === currentKey) {
-          el.classList.add('border-[#00C0A3]', 'bg-[#00C0A3]/10', 'shadow-sm');
-          el.classList.remove('border-neutral-200', 'bg-neutral-50');
-        } else {
-          el.classList.remove('border-[#00C0A3]', 'bg-[#00C0A3]/10', 'shadow-sm');
-          el.classList.add('border-neutral-200', 'bg-neutral-50');
-        }
-      });
+    function renderHeaderAvatar() {
+      const c = document.getElementById('header-avatar');
+      if (!c) return;
+      const pctx = c.getContext('2d');
+      pctx.imageSmoothingEnabled = false;
+      pctx.clearRect(0, 0, c.width, c.height);
+      pctx.drawImage(PLAYER_SPRITES.idle, 0, 0);
     }
 
     /*************************************************************************
@@ -1416,8 +1218,7 @@
     }
 
     window.onload = function () {
-      renderInspectorCanvases();
-      updateInspectorHighlight();
+      renderHeaderAvatar();
       lastFrameTime = performance.now();
       requestAnimationFrame(gameLoop);
     };
